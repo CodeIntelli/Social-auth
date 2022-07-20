@@ -1,5 +1,5 @@
 import express from 'express';
-import auth from "./auth.js"
+import auth from "./services/auth"
 import passport from 'passport';
 const app = express();
 

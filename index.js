@@ -1,6 +1,7 @@
 import express from 'express';
-import auth from "./services/auth"
 import passport from 'passport';
+import session from "express-session";
+import auth from "./services/auth.js"
 const app = express();
 
 function isLoggedIn(req, res, next) {
@@ -19,7 +20,7 @@ app.get('/auth/google',
     passport.authenticate('google', { scope: ['email', 'profile'] }
     ));
 
-app.get('/auth/google/callback',
+app.get('/google/callback',
     passport.authenticate('google', {
         successRedirect: '/protected',
         failureRedirect: '/auth/google/failure'

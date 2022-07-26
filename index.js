@@ -5,11 +5,6 @@ const app = express();
 import { SocialRoutes } from "./src/routes";
 import "./src/database/index.js";
 import { PORT } from "./src/config/";
-import passport from "passport";
-import session from "express-session";
-app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
-app.use(passport.initialize());
-app.use(passport.session());
 
 
 app.use(express.json());
@@ -25,8 +20,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/", SocialRoutes);
 
-// //* Middleware for Error
-// app.use(ErrorHandler);
 // ? when we declare any undefine variable then this error occur so we can handle this error here
 process.on("uncaughtException", (error) => {
     console.error(

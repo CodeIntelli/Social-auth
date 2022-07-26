@@ -28,7 +28,8 @@ SocialRoutes.get('/google/callback',
 );
 
 SocialRoutes.get('/protected', isLoggedIn, (req, res) => {
-    res.send(`Hello ${req.user.displayName}`);
+
+    res.send(`Hello ${req.user.firstName}`);
 });
 
 SocialRoutes.get('/logout', (req, res) => {

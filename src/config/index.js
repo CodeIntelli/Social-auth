@@ -9,5 +9,6 @@ export const {
     JWT_EXPIRE,
     COOKIE_EXPIRE,
     GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET
+    GOOGLE_CLIENT_SECRET,
+    CALLBACK_URL,
 } = process.env;

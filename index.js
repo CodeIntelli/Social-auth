@@ -1,46 +1,52 @@
 import express from 'express';
-import passport from 'passport';
-import session from "express-session";
-import auth from "./services/auth.js"
+import cors from "cors";
+import cookieParser from "cookie-parser";
 const app = express();
-
-function isLoggedIn(req, res, next) {
-    req.user ? next() : res.sendStatus(401);
-}
-
+import { SocialRoutes } from "./src/routes";
+import "./src/database/index.js";
+import { PORT } from "./src/config/";
+import passport from "passport";
+import session from "express-session";
 app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('/', (req, res) => {
-    res.send('<a href="/auth/google">Authenticate with Google</a>');
-});
 
-app.get('/auth/google',
-    passport.authenticate('google', { scope: ['email', 'profile'] }
-    ));
-
-app.get('/google/callback',
-    passport.authenticate('google', {
-        successRedirect: '/protected',
-        failureRedirect: '/auth/google/failure'
+app.use(express.json());
+app.use(cookieParser());
+app.use(
+    cors({
+        credentials: true,
     })
 );
+import bodyParser from "body-parser";
 
-app.get('/protected', isLoggedIn, (req, res) => {
-    res.send(`Hello ${req.user.displayName}`);
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use("/", SocialRoutes);
+
+// //* Middleware for Error
+// app.use(ErrorHandler);
+// ? when we declare any undefine variable then this error occur so we can handle this error here
+process.on("uncaughtException", (error) => {
+    console.error(
+        `Shutting down the server due to uncaught exception:${error.message}`
+    );
+    process.exit(1);
 });
 
-app.get('/logout', (req, res) => {
-    req.logout();
-    req.session.destroy();
-    res.send('Goodbye!');
+let server = app.listen(PORT, () => {
+    console.log("\n\n\n\n\n");
+    console.log(`Server Connected at http://localhost:${PORT}`);
 });
 
-app.get('/auth/google/failure', (req, res) => {
-    res.send('Failed to authenticate..');
+// * unhandled promise rejection: it occur when we are put incorrect mongodb string in short it accept all mongodb connection errors
+//  * when we are handling this error we dont need to put catch block in database connection file
+process.on("unhandledRejection", (error) => {
+    console.error(
+        `Shutting down the server due to unhandled promise rejection: ${error.message}`
+    );
+    server.close(() => {
+        process.exit(1);
+    });
 });
-
-app.listen(2025, () => {
-    console.log("server is running 2025")
-})
